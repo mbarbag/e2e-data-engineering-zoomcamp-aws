@@ -1,3 +1,5 @@
 *.parquet
+data/
 ny_taxi_postgres_data/
 .ipynb_checkpoints/
+data_pgadmin/
