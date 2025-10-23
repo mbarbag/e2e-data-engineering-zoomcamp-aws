@@ -18,3 +18,12 @@ On the `docker/` folder remains all the Docker configuration.
 The pgAdmin access service can communicate with Postgres through the **private network** created when running docker-compose.
 
 The **Dockerfile** contains the ETL pipeline (*Python code*) to ingest data into that Postgres DB.
+
+
+## Terraform
+
+The `terraform/` folder contains all the Terraform setup required to create remote resources on AWS.
+
+The `main.tf` file includes the provider configuration to connect to AWS and create an S3 bucket.
+
+This configuration is intended to be executed from within an *EC2 instance* that has an IAM role attached with the appropriate permissions.
