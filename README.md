@@ -48,3 +48,8 @@ This pipeline will be scheduled to run **daily**, ensuring that the Redshift Ser
 ### Architecture
 > Extract (Postgres) **>>** Load raw data into S3 (staging layer) **>>** COPY raw data into Redshift (Data warehouse) **>>** Transform inside Redshift (*LATER* — SQL/dbt)
 
+## dbt
+
+In the `dbt/` folder remains all the **Transformation layer** from our ELT pipeline.
+
+For this part, you'll need to configure the dbt project with a Redshift connection to your data warehouse. 
