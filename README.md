@@ -53,3 +53,5 @@ This pipeline will be scheduled to run **daily**, ensuring that the Redshift Ser
 In the `dbt/` folder remains all the **Transformation layer** from our ELT pipeline.
 
 For this part, you'll need to configure the dbt project with a Redshift connection to your data warehouse. 
+
+To connect to Redshift, ensure that the workgroup is publicly accessible!
