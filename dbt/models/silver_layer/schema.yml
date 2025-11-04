@@ -6,3 +6,155 @@ sources:
     schema: "{{ env_var('DBT_SCHEMA') }}"
     tables:
       - name: yellow_taxi_trips
+
+models:
+  - name: stg_silver_layer__yellow_taxi_trips
+    description: >
+      Trips made by New York City’s iconic yellow taxis have been recorded and provided to the TLC
+      since 2009. Yellow taxis are traditionally hailed by signaling to a driver who is on duty and seeking
+      a passenger (street hail), but now they may also be hailed using an e-hail app like Curb or Arro.
+      Yellow taxis are the only vehicles permitted to respond to a street hail from a passenger in all five
+      boroughs.
+      Records include fields capturing pick-up and drop-off dates/times, pick-up and drop-off locations,
+      trip distances, itemized fares, rate types, payment types, and driver-reported passenger counts.
+      The records were collected and provided to the NYC Taxi and Limousine Commission (TLC) by
+      technology service providers. The trip data was not created by the TLC, and TLC cannot
+      guarantee their accuracy.
+    columns:
+      - name: trip_id
+        data_type: text
+        description: Primary key for this table, generated with a concatenation of vendorid+pickup_datetime
+        tests:
+          - unique:
+              severity: warn
+          - not_null:
+              severity: warn
+
+      - name: vendorid
+        data_type: integer
+        description: A code indicating the TPEP provider that provided the record.
+
+      - name: vendorid_description
+        data_type: text
+        description: >
+          Description of the vendorid code
+          1 = Creative Mobile Technologies, LLC
+          2 = Curb Mobility, LLC
+          6 = Myle Technologies Inc
+          7 = Helix
+
+      - name: pickup_datetime
+        data_type: timestamp without time zone
+        description: The date and time when the meter was engaged.
+
+      - name: dropoff_datetime
+        data_type: timestamp without time zone
+        description: The date and time when the meter was disengaged.
+
+      - name: passenger_count
+        data_type: integer
+        description: The number of passengers in the vehicle.
+
+      - name: trip_distance
+        data_type: real
+        description: The elapsed trip distance in miles reported by the taximeter
+
+      - name: ratecodeid
+        data_type: integer
+        description: >
+          The final rate code in effect at the end of the trip.
+          1 = Standard rate
+          2 = JFK
+          3 = Newark
+          4 = Nassau or Westchester
+          5 = Negotiated fare
+          6 = Group ride
+          99 = Null/unknown
+
+      - name: store_and_fwd_flag
+        data_type: character varying
+        description: >
+          This flag indicates whether the trip record was held in vehicle memory before
+          sending to the vendor, aka “store and forward,” because the vehicle did not
+          have a connection to the server.
+          Y = store and forward trip
+          N = not a store and forward trip
+
+      - name: pickup_locationid
+        data_type: integer
+        description: locationid where the meter was engaged.
+        tests:
+          - relationships:
+              to: ref('taxi_zone_lookup')
+              field: locationid
+              severity: warn
+
+      - name: dropoff_locationid
+        data_type: integer
+        description: locationid where the meter was disengaged.
+        tests:
+          - relationships:
+              to: ref('taxi_zone_lookup')
+              field: locationid
+              severity: warn
+
+      - name: payment_type
+        data_type: integer
+        description: A numeric code signifying how the passenger paid for the trip.
+        tests:
+          - accepted_values:
+              values: "{{ var('payment_type_values') }}"
+              severity: warn
+              quote: false
+
+      - name: payment_type_description
+        data_type: text
+        description: >
+          Description of the payment_type code
+          0 = Flex Fare trip
+          1 = Credit card
+          2 = Cash
+          3 = No charge
+          4 = Dispute
+          5 = Unknown
+          6 = Voided trip
+
+      - name: fare_amount
+        data_type: real
+        description: The time-and-distance fare calculated by the meter.
+
+      - name: extra
+        data_type: real
+        description: Miscellaneous extras and surcharges.
+
+      - name: mta_tax
+        data_type: real
+        description: Tax that is automatically triggered based on the metered rate in use.
+
+      - name: tip_amount
+        data_type: real
+        description: Tip amount – This field is automatically populated for credit card tips. Cash tips are not included.
+
+      - name: tolls_amount
+        data_type: real
+        description: Total amount of all tolls paid in trip.
+
+      - name: improvement_surcharge
+        data_type: real
+        description: Improvement surcharge assessed trips at the flag drop.
+
+      - name: total_amount
+        data_type: real
+        description: The total amount charged to passengers. Does not include cash tips.
+
+      - name: congestion_surcharge
+        data_type: real
+        description: Total amount collected in trip for NYS congestion surcharge.
+
+      - name: airport_fee
+        data_type: real
+        description: For pick up only at LaGuardia and John F. Kennedy Airports.
+
+      - name: cbd_congestion_fee
+        data_type: real
+        description: Per-trip charge for MTA's Congestion Relief Zone starting Jan. 5, 2025.
