@@ -1,1 +1,15 @@
 version: 2
+
+models:
+  - name: monthly_zone_revenue
+    description: >
+      Aggregated table of yellow taxi trips per pickup zone and month.
+      The table contains monthly sum of the total_amount used to calculate the monthly revenue.
+    columns:
+      - name: revenue_monthly_total_amount
+        description: Monthly sum of the the total_amount of the fare charged for the trip per pickup zone, month and service.
+        tests:
+            - not_null:
+                severity: error
+  - name: zones
+    description: List of unique zones idefied by locationid. 
