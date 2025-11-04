@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: silver_layer
+    database: "{{ env_var('DBT_DATABASE') }}"
+    schema: "{{ env_var('DBT_SCHEMA') }}"
+    tables:
+      - name: yellow_taxi_trips
